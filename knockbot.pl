@@ -30,10 +30,10 @@ $poe_kernel->run();
  
 sub _start {
     my $heap = $_[HEAP];
- 
+
     # retrieve our component's object from the heap where we stashed it
     my $irc = $heap->{irc};
- 
+
     $irc->yield( register => 'all' );
     $irc->yield( connect => { } );
     return;
@@ -41,14 +41,14 @@ sub _start {
  
 sub irc_001 {
     my $sender = $_[SENDER];
- 
+
     # Since this is an irc_* event, we can get the component's object by
     # accessing the heap of the sender. Then we register and connect to the
     # specified server.
     my $irc = $sender->get_heap();
- 
+
     print "Connected to ", $irc->server_name(), "\n";
- 
+
     # we join our channels
     $irc->yield( join => $_ ) for @channels;
     return;
@@ -58,16 +58,15 @@ sub irc_msg {
     my ($sender, $who, $where, $what) = @_[SENDER, ARG0 .. ARG2];
     my $nick = ( split /!/, $who )[0];
     if ( my ($knock) = $what =~ /^knock (.+)/ ) {
-    	print "Generate a challenge $nick\n";
-        my @randline = split(":", $array[rand @array]);
-        my $key = $randline[0];
-	my $value = $randline[1];
-	if ($knock eq "knock") {
-		$irc->yield ( privmsg => $nick => $key );
-		print "The Secret response for $nick is $value\n";
-		$challenge{'$nick'} = $value;
-
-	}
+    print "Generate a challenge $nick\n";
+    my @randline = split(":", $array[rand @array]);
+    my $key = $randline[0];
+    my $value = $randline[1];
+    if ($knock eq "knock") {
+        $irc->yield ( privmsg => $nick => $key );
+        print "The Secret response for $nick is $value\n";
+        $challenge{'$nick'} = $value;
+    }
     }
     print $challenge{'$nick'}."\n";
     if (exists($challenge{'$nick'})) {
@@ -95,7 +94,7 @@ sub irc_public {
 sub _default {
     my ($event, $args) = @_[ARG0 .. $#_];
     my @output = ( "$event: " );
- 
+
     for my $arg (@$args) {
         if ( ref $arg eq 'ARRAY' ) {
             push( @output, '[' . join(', ', @$arg ) . ']' );
