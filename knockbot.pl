@@ -70,7 +70,7 @@ sub irc_msg {
 	}
     }
     print $challenge{'$nick'}."\n";
-    if exists($challenge{'$nick'}) {
+    if (exists($challenge{'$nick'})) {
         if ( lc($what) eq $challenge{'$nick'}) {
             $irc->yield ( privmsg => $nick => "Correct response. Invite issued. Have a nice day." );
             print "CORRECT!\n";
